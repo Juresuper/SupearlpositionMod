@@ -1,0 +1,50 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cube",
+    "textures": {
+      "north":  "supearlposition:blocks/endergy_reactor_control_block_front",
+      "south":  "supearlposition:blocks/endergy_reactor_control_block_side",
+      "west":  "supearlposition:blocks/endergy_reactor_control_block_side",
+      "east":  "supearlposition:blocks/endergy_reactor_control_block_side",
+      "up":  "supearlposition:blocks/endergy_reactor_control_block_top",
+      "down":  "supearlposition:blocks/endergy_reactor_control_block_bottom"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "formed": {
+      "unformed": {
+      },
+      "p000": {
+
+      },
+      "p001": {
+
+      },
+      "p010": {
+
+      },
+      "p011": {
+
+
+      },
+      "p100": {
+
+
+      },
+      "p101": {
+
+
+      },
+      "p110": {
+
+      },
+      "p111": {
+
+      }
+
+  }
+}
+}

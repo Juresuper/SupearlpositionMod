@@ -1,0 +1,21 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "supearlposition:endergy_reactor_core"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "formed": {
+      "unformed": { },
+      "p000": { },
+      "p001": {},
+      "p010": { },
+      "p011": { },
+      "p100": { },
+      "p101": { },
+      "p110": { },
+      "p111": { }
+    }
+    }
+  }

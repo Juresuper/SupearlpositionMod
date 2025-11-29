@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "supearlposition:blocks/endergy_reactor_core"
+  }
+}
