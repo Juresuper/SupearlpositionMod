@@ -13,7 +13,7 @@ public class GuiEndergyReactor extends GuiContainer{
     public static final int HEIGHT = 256;
 
     private static final ResourceLocation background = new ResourceLocation(SupearlpositionMod.MODID, "textures/gui/endergy_reactor_gui.png");
-    private TileEndergyReactorControl reactorControl;
+    private final TileEndergyReactorControl reactorControl;
 
     public GuiEndergyReactor(TileEndergyReactorControl tileEntity, EndergyReactorControlContainer container) {
         super(container);
@@ -34,22 +34,43 @@ public class GuiEndergyReactor extends GuiContainer{
         drawPearlCountBar(reactorControl.getClientPearlCount());
         if(reactorControl.getClientProgress() > 0){
             int percentage = 100 - reactorControl.getClientProgress() * 100 / TileEndergyReactorControl.MAX_PROGRESS;
-            drawString(mc.fontRenderer, "Progress: " + percentage  + "%", guiLeft + 10, guiTop + 30, 0xFFFFFF);
+            drawString(mc.fontRenderer, "Processing: " + percentage  + "%", guiLeft + 104, guiTop + 80, 0xFF00FF00);
         }
+        if(reactorControl.getClientPearlCount() < TileEndergyReactorControl.MIN_PEARL_COUNT){
+            drawString(mc.fontRenderer, "STATUS: ", guiLeft + 83, guiTop + 35, 0xFF00FF00);
+            drawString(mc.fontRenderer, "OFF", guiLeft + 133, guiTop + 35, 0xFFFF0000);
 
-        if(reactorControl.getPearl_count() > 0){
-            int pearls= reactorControl.getPearl_count();
-            drawString(mc.fontRenderer, "Number of pearls: " + pearls, guiLeft + 10, guiTop + 50, 0xA020F0);
-        }
-        if(true){
+            drawString(mc.fontRenderer, "Pearls required: " + (TileEndergyReactorControl.MIN_PEARL_COUNT -reactorControl.getClientPearlCount()), guiLeft + 83, guiTop + 50, 0xFF00FF00);
+            //drawString(mc.fontRenderer, 100 -reactorControl.getClientPearlCount()+ "", guiLeft + 105, guiTop + 65, 0xFF00FF00);
+
+
+        }else{
             int percentage = 100 - reactorControl.getReactor_cycle_count() * 100 / TileEndergyReactorControl.REACTOR_CYCLE_LENGTH;
-            drawString(mc.fontRenderer, "Reactor cycle progress: " + percentage, guiLeft + 10, guiTop + 70, 0xFFBF00);
-        }
-        if(true){
-            int excess_fuel = reactorControl.getExcess_fuel();
-            drawString(mc.fontRenderer, "Excess fuel: " + excess_fuel, guiLeft + 10, guiTop + 90, 0xFFBF00);
+            drawString(mc.fontRenderer, "Cycle Progress: " + percentage, guiLeft + 83, guiTop + 35, 0xFF00FF00);
+
+            int production = getProduction();
+            drawString(mc.fontRenderer, "Production speed:", guiLeft + 83, guiTop + 50, 0xFF00FF00);
+            drawString(mc.fontRenderer, production + " Pearls/s:", guiLeft + 105, guiTop + 65, 0xFF00FF00);
         }
 
+
+
+    }
+
+    private int getProduction() {
+        int production;
+        if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE1 && reactorControl.getClientPearlCount() > 100) {
+            production = 10;
+        } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE2) {
+            production = 40;
+        } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE3) {
+            production = 100;
+        } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE4) {
+            production = 150;
+        }else{
+            production = 500;
+        }
+        return production;
     }
 
     @Override
@@ -79,19 +100,38 @@ public class GuiEndergyReactor extends GuiContainer{
     }*/
     private void drawPearlCountBar(int pearlCount) {
         int left = 80;
-        int top = 120;
+        int top = 130;
         int right = 180;
-        int bottom = 110;
-        drawRect(guiLeft + left, guiTop + bottom, guiLeft + right, guiTop + top, 0xff555555);
-        int percentage = pearlCount* 100 / TileEndergyReactorControl.MAX_PEARL_COUNT;
+        int bottom = 120;
+
+        // your background
+        drawRect(guiLeft + left-2, guiTop + bottom-2, guiLeft + right+2, guiTop + top+2, 0xFF3CFFD8);
+        drawRect(guiLeft + left, guiTop + bottom, guiLeft + right, guiTop + top, 0xFF000000);
+
+        int barWidth = right - left;
+
+        int s1 = left + (barWidth * TileEndergyReactorControl.STAGE1  / TileEndergyReactorControl.MAX_PEARL_COUNT);
+        int s2 = left + (barWidth * TileEndergyReactorControl.STAGE2  / TileEndergyReactorControl.MAX_PEARL_COUNT);
+        int s3 = left + (barWidth * TileEndergyReactorControl.STAGE3  / TileEndergyReactorControl.MAX_PEARL_COUNT);
+        int s4 = left + (barWidth * TileEndergyReactorControl.STAGE4  / TileEndergyReactorControl.MAX_PEARL_COUNT);
+
+        int sepColor = 0xFFFF0000;
+        drawVerticalLine(guiLeft + s1, guiTop + bottom+1, guiTop + top, sepColor);
+        drawVerticalLine(guiLeft + s2, guiTop + bottom+1, guiTop + top, sepColor);
+        drawVerticalLine(guiLeft + s3, guiTop + bottom+1, guiTop + top, sepColor);
+        drawVerticalLine(guiLeft + s4, guiTop + bottom+1, guiTop + top, sepColor);
+
+
+        int percentage = pearlCount * 100 / TileEndergyReactorControl.MAX_PEARL_COUNT;
+
         if(pearlCount < TileEndergyReactorControl.MAX_PEARL_COUNT){
             for (int i = 0 ; i < percentage ; i++) {
-                drawVerticalLine(guiLeft + left + 1 + i, guiTop + bottom, guiTop + top, i % 4 == 0 ? 0xff6a1a91 : 0xffb62ff7);
+                drawVerticalLine(guiLeft + left + 1 + i, guiTop + bottom, guiTop + top,
+                        i % 4 == 0 ? 0xFF00FF00 : 0xFF008000);
             }
-        }else{
-            drawString(mc.fontRenderer, "CRITICAL MASS", guiLeft + left, guiTop + 115, 0xFFBF00);
+        } else {
+            drawString(mc.fontRenderer, "CRITICAL MASS", guiLeft + left + 15, guiTop + 120, 0xFF00FF00);
         }
-
-
     }
+
 }

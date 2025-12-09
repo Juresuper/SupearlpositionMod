@@ -3,48 +3,108 @@
   "defaults": {
     "model": "cube",
     "textures": {
-      "north":  "supearlposition:blocks/endergy_reactor_control_block_front",
-      "south":  "supearlposition:blocks/endergy_reactor_control_block_side",
-      "west":  "supearlposition:blocks/endergy_reactor_control_block_side",
-      "east":  "supearlposition:blocks/endergy_reactor_control_block_side",
-      "up":  "supearlposition:blocks/endergy_reactor_control_block_top",
-      "down":  "supearlposition:blocks/endergy_reactor_control_block_bottom"
+      "north":  "supearlposition:blocks/reactor_control",
+      "south":  "supearlposition:blocks/reactor_control",
+      "west":  "supearlposition:blocks/reactor_control",
+      "east":  "supearlposition:blocks/reactor_control",
+      "up":  "supearlposition:blocks/reactor_control",
+      "down":  "supearlposition:blocks/reactor_control"
     }
   },
   "variants": {
     "normal": [{}],
     "inventory": [{}],
+
     "formed": {
-      "unformed": {
-      },
+      "unformed": {},
+
       "p000": {
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_front_bottom_right",
+          "south": "supearlposition:blocks/reactor_bottom_left",
+          "west":  "supearlposition:blocks/reactor_bottom_left",
+          "east":  "supearlposition:blocks/reactor_bottom_right",
+          "up":    "supearlposition:blocks/reactor_top_left",
+          "down":  "supearlposition:blocks/reactor_bottom_left"
+        }
       },
+
       "p001": {
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_bottom_left",
+          "south": "supearlposition:blocks/reactor_front_bottom_left",
+          "west":  "supearlposition:blocks/reactor_bottom_right",
+          "east":  "supearlposition:blocks/reactor_bottom_right",
+          "up":    "supearlposition:blocks/reactor_top_left",
+          "down":  "supearlposition:blocks/reactor_bottom_left"
+        }
       },
+
       "p010": {
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_front_top_right",
+          "south": "supearlposition:blocks/reactor_bottom_left",
+          "west":  "supearlposition:blocks/reactor_top_left",
+          "east":  "supearlposition:blocks/reactor_bottom_right",
+          "up":    "supearlposition:blocks/reactor_top_left",
+          "down":  "supearlposition:blocks/reactor_bottom_left"
+        }
       },
+
       "p011": {
-
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_bottom_left",
+          "south": "supearlposition:blocks/reactor_front_top_left",
+          "west":  "supearlposition:blocks/reactor_top_right",
+          "east":  "supearlposition:blocks/reactor_bottom_right",
+          "up":    "supearlposition:blocks/reactor_bottom_left",
+          "down":  "supearlposition:blocks/reactor_bottom_left"
+        }
       },
+
       "p100": {
-
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_front_bottom_left",
+          "south": "supearlposition:blocks/reactor_bottom_right",
+          "west":  "supearlposition:blocks/reactor_bottom_left",
+          "east":  "supearlposition:blocks/reactor_bottom_right",
+          "up":    "supearlposition:blocks/reactor_top_right",
+          "down":  "supearlposition:blocks/reactor_bottom_right"
+        }
       },
+
       "p101": {
-
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_bottom_right",
+          "south": "supearlposition:blocks/reactor_front_bottom_right",
+          "west":  "supearlposition:blocks/reactor_bottom_left",
+          "east":  "supearlposition:blocks/reactor_bottom_left",
+          "up":    "supearlposition:blocks/reactor_top_right",
+          "down":  "supearlposition:blocks/reactor_bottom_right"
+        }
       },
+
       "p110": {
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_front_top_left",
+          "south": "supearlposition:blocks/reactor_bottom_right",
+          "west":  "supearlposition:blocks/reactor_bottom_left",
+          "east":  "supearlposition:blocks/reactor_top_right",
+          "up":    "supearlposition:blocks/reactor_top_right",
+          "down":  "supearlposition:blocks/reactor_bottom_right"
+        }
       },
+
       "p111": {
-
+        "textures": {
+          "north": "supearlposition:blocks/reactor_bottom_right",
+          "south": "supearlposition:blocks/reactor_front_top_right",
+          "west":  "supearlposition:blocks/reactor_bottom_left",
+          "east":  "supearlposition:blocks/reactor_top_left",
+          "up":    "supearlposition:blocks/reactor_bottom_right",
+          "down":  "supearlposition:blocks/reactor_bottom_right"
+        }
       }
-
+    }
   }
-}
 }

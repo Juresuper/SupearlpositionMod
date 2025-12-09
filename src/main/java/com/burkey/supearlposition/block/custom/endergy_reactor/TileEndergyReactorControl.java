@@ -2,7 +2,10 @@ package com.burkey.supearlposition.block.custom.endergy_reactor;
 
 import com.burkey.supearlposition.block.ModBlocks;
 import com.burkey.supearlposition.item.ModItems;
+import com.burkey.supearlposition.projectile.EnrichedPearlEntity;
+import com.burkey.supearlposition.projectile.MeltdownBlobEntity;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -36,24 +39,30 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
-    public static final int INPUT_SLOT = 2;
-    public static final int OUTPUT_SLOTS = 1;
+    public static final int INPUT_SLOT = 1;
+    public static final int OUTPUT_SLOTS = 4;
 
     //CONFIGURABLE
     public static final int MAX_PROGRESS = 10;
 
-    public static final int MIN_PEARL_COUNT = 100;
+    public static final int MIN_PEARL_COUNT = 32;
     public static final int REACTOR_CYCLE_LENGTH = 80;
     public static final int MAX_PEARL_COUNT = 100000;
+    public static final int STAGE1 = 1000;
+    public static final int STAGE2 = 10000;
+    public static final int STAGE3 = 25000;
+    public static final int STAGE4 = 75000;
 
 
 
     private int progress = 0;
+    private int countdown = 100;
     private int pearl_count = 0;
     private int clientProgress = -1;
     private int clientPearlCount = -1;
     private int clientExcessFuel = -1;
     private int clientReactorCycleCount = -1;
+
 
 
 
@@ -69,10 +78,6 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
 
     private int reactor_cycle_count = 0;
 
-    private double conversion_rate = 0.05;
-
-
-    private int fuel_produced = 0;
 
     public int getExcess_fuel() {
         return excess_fuel;
@@ -125,7 +130,7 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
             }else{
                 startConsume();
             }
-            if(pearl_count >= MIN_PEARL_COUNT){
+            if(pearl_count >= MIN_PEARL_COUNT && pearl_count <= MAX_PEARL_COUNT){
                 setState(EndergyReactorState.WORKING);
                 if(reactor_cycle_count > 0){
                     reactor_cycle_count--;
@@ -133,12 +138,40 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
                 }else{
                     runReactor();
                 }
+            }else if(pearl_count >= MIN_PEARL_COUNT){
+                if(countdown > 0){
+                    countdown--;
+                }else{
+                    reactorMeltdown(this.world,this.pos);
+                }
             }
         }
     }
 
+    private void reactorMeltdown(World worldIn, BlockPos pos) {
+        this.world.createExplosion((Entity)null, pos.getX(), pos.getY(), pos.getZ(), 6.0F, true);
+        MeltdownBlobEntity test = new MeltdownBlobEntity(worldIn, pos.getX(),  pos.getY()+5, pos.getZ(),this.pearl_count);
+        worldIn.spawnEntity(test);
+
+    }
+
     private void runReactor(){
-        fuel_produced = (int) (pearl_count * conversion_rate);
+        //double conversion_rate = 0.05;
+        int fuel_produced = 0;
+        if (pearl_count < STAGE1) {
+            fuel_produced = 10;
+        } else if (pearl_count < STAGE2) {
+            fuel_produced = 40;
+        } else if (pearl_count < STAGE3) {
+            fuel_produced = 100;
+        } else if (pearl_count < STAGE4) {
+            fuel_produced = 150;
+        }else{
+            fuel_produced = 500;
+        }
+        //fuel_produced *= 100;
+
+        //fuel_produced = (int) (pearl_count * conversion_rate);
         //pearl_count -= fuel_produced;
 
         int spaceAvailable = checkSpace();
@@ -159,16 +192,22 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
         reactor_cycle_count = REACTOR_CYCLE_LENGTH;
         markDirty();
     }
-    private int checkSpace(){
-        ItemStack currentOutput = outputHandler.getStackInSlot(0);
-        int spaceAvailable = 0;
-        if (currentOutput.isEmpty()) {
-            spaceAvailable = 64;
-        } else if (currentOutput.getItem() == ModItems.enrichedPearlItem) {
-            spaceAvailable = currentOutput.getMaxStackSize() - currentOutput.getCount();
+    private int checkSpace() {
+        int totalSpace = 0;
+
+        for (int slot = 0; slot < OUTPUT_SLOTS; slot++) {
+            ItemStack stack = outputHandler.getStackInSlot(slot);
+            if (stack.isEmpty()) {
+                totalSpace += 64;
+            }
+            else if (stack.getItem() == ModItems.enrichedPearlItem) {
+                totalSpace += stack.getMaxStackSize() - stack.getCount();
+            }
         }
-        return spaceAvailable;
+
+        return totalSpace;
     }
+
     private void convertExcess(){
 
         pearl_count += excess_fuel * 5;
@@ -346,5 +385,6 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
             getWorld().notifyBlockUpdate(pos, blockState, blockState, 3);
         }
     }
+
 
 }

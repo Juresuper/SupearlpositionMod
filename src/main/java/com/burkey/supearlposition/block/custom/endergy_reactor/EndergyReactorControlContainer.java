@@ -60,6 +60,9 @@ public class EndergyReactorControlContainer extends Container {
         int slotIndex = 0;
         addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex++, 47, 117)); x+=18;
         addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex++, 192, 117)); x+=18;
+        addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex++, 214, 117)); x+=18;
+        addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex++, 192, 95)); x+=18;
+        addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex++, 214, 95)); x+=18;
 
         //addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex++, x, y));
 

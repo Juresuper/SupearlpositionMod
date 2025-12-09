@@ -3,15 +3,18 @@ package com.burkey.supearlposition.projectile;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
@@ -24,17 +27,34 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Random;
+import java.util.UUID;
+
 public class EnrichedPearlEntity extends EntityThrowable {
     public EnrichedPearlEntity(World world) {
         super(world);
     }
-
+    private Random random;
+    private boolean isInMeltdown;
+    private MeltdownBlobEntity parentBlob;
+    private UUID parentUUID;
     public EnrichedPearlEntity(World world, EntityLivingBase entityLivingBase) {
         super(world, entityLivingBase);
+        isInMeltdown = false;
+    }
+    public EnrichedPearlEntity(World world, MeltdownBlobEntity blob, boolean Meltdown) {
+        super(world);
+        parentBlob = blob;
+        isInMeltdown = Meltdown;
+        this.posX = blob.posX;
+        this.posY = blob.posY;
+        this.posZ = blob.posZ;
+        this.parentUUID = blob.getUniqueID();
     }
 
     public EnrichedPearlEntity(World world, double v, double v1, double v2) {
         super(world, v, v1, v2);
+        isInMeltdown = false;
     }
 
     public static void registerFixesSnowball(DataFixer fixer) {
@@ -51,23 +71,77 @@ public class EnrichedPearlEntity extends EntityThrowable {
 
     }
 
+    @Override
+    public void onUpdate() {
+        random = new Random();
+        float f1 = 0.99F;
+        if (isInMeltdown) {
+            double chaos = 0.1D;
+
+            this.motionX += (random.nextDouble() - 0.5D) * chaos;
+            this.motionY += (random.nextDouble() - 0.5D) * chaos;
+            this.motionZ += (random.nextDouble() - 0.5D) * chaos;
+
+
+            if (parentBlob != null) {
+                if(this.ticksExisted % 40 == 0){
+                    this.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
+                }
+                if(this.ticksExisted == 200){
+                    isInMeltdown = false;
+                }
+                this.setNoGravity(true);
+                double dx = posX - parentBlob.posX;
+                double dy = posY - parentBlob.posY;
+                double dz = posZ - parentBlob.posZ;
+                double dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                if (dist > 1.0) {
+                    double pull = 0.1;
+                    motionX -= (dx / dist) * pull;
+                    motionY -= (dy / dist) * pull;
+                    motionZ -= (dz / dist) * pull;
+                }
+                this.motionX *= (double)f1;
+                this.motionY *= (double)f1;
+                this.motionZ *= (double)f1;
+            }
+        }else{
+            this.setNoGravity(false);
+        }
+
+        super.onUpdate();
+    }
+
     protected void onImpact(RayTraceResult traceResult) {
-        if (traceResult.entityHit != null) {
-            int lvt_2_1_ = 0;
-            teleportEntity(traceResult.entityHit.getEntityWorld(), (EntityLivingBase) traceResult.entityHit);
-            if (traceResult.entityHit instanceof EntityBlaze) {
-                lvt_2_1_ = 3;
+        Entity hitEntity = traceResult.entityHit;
+        if(hitEntity != parentBlob){
+            if (traceResult.entityHit != null) {
+                int lvt_2_1_ = 0;
+                if (traceResult.entityHit instanceof EntityBlaze) {
+                    lvt_2_1_ = 3;
+                }
+                if (!(traceResult.entityHit instanceof MeltdownBlobEntity)) {
+                    if (traceResult.entityHit instanceof EntityLivingBase) {
+                        teleportEntity(traceResult.entityHit.getEntityWorld(), (EntityLivingBase) traceResult.entityHit);
+                    }
+                }
+
+
+                traceResult.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float)lvt_2_1_);
             }
 
-            traceResult.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float)lvt_2_1_);
-        }
-        if(traceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
-            teleportBlock(this.world,traceResult.getBlockPos());
+
+            if (!this.world.isRemote && !(hitEntity instanceof MeltdownBlobEntity)) {
+                this.world.setEntityState(this, (byte)3);
+                this.setDead();
+            }
         }
 
-        if (!this.world.isRemote) {
-            this.world.setEntityState(this, (byte)3);
+
+        if(traceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+            teleportBlock(this.world,traceResult.getBlockPos());
             this.setDead();
+
         }
 
     }
@@ -99,7 +173,7 @@ public class EnrichedPearlEntity extends EntityThrowable {
     private void teleportBlock(World world, BlockPos blockPos){
         IBlockState iblockstate = world.getBlockState(blockPos);
         Block block = iblockstate.getBlock();
-        if(!(block instanceof ITileEntityProvider)) {
+        if(!(block instanceof ITileEntityProvider) && (block.getBlockHardness(iblockstate,world,blockPos) >= 0)) {
             for(int i = 0; i < 1000; ++i) {
                 BlockPos blockpos = blockPos.add(world.rand.nextInt(16) - world.rand.nextInt(16), world.rand.nextInt(8) - world.rand.nextInt(8), world.rand.nextInt(16) - world.rand.nextInt(16));
                 if (world.isAirBlock(blockpos)) {
@@ -124,5 +198,34 @@ public class EnrichedPearlEntity extends EntityThrowable {
             }
         }
 
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        compound.setBoolean("meltdown",isInMeltdown);
+        return compound;
+    }
+
+    @Override
+    public void writeEntityToNBT(NBTTagCompound compound) {
+        super.writeEntityToNBT(compound);
+        if(this.parentBlob != null){
+            compound.setUniqueId("parent",this.parentBlob.getUniqueID());
+        }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        compound.getBoolean("meltdown");
+    }
+
+    @Override
+    public void readEntityFromNBT(NBTTagCompound compound) {
+        super.readEntityFromNBT(compound);
+        if(compound.hasUniqueId("parent")){
+            parentUUID = compound.getUniqueId("parent");
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.burkey.supearlposition.SupearlpositionMod;
 import com.burkey.supearlposition.block.ModBlocks;
 import com.burkey.supearlposition.block.custom.endergy_reactor.TileEndergyReactorControl;
 import com.burkey.supearlposition.block.custom.endergy_reactor.TileEndergyReactorCore;
+import com.burkey.supearlposition.block.custom.tools.SoundsTools;
 import com.burkey.supearlposition.event.EnrichedPearlEvent;
 import com.burkey.supearlposition.item.ModItems;
 import com.burkey.supearlposition.network.Messages;
@@ -31,6 +32,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(SupearlpositionMod.instance, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(EnrichedPearlEvent.instance);
+        SoundsTools.registerSounds();
     }
     public void postInit(FMLPostInitializationEvent e) {
 

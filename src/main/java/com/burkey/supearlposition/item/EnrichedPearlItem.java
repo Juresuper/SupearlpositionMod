@@ -1,6 +1,7 @@
 package com.burkey.supearlposition.item;
 
 import com.burkey.supearlposition.projectile.EnrichedPearlEntity;
+import com.burkey.supearlposition.projectile.MeltdownBlobEntity;
 import ibxm.Player;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +22,7 @@ public class EnrichedPearlItem extends ItemBase{
     public EnrichedPearlItem(String name) {
         super(name);
         this.maxStackSize = 64;
+
     }
 
     @Override
@@ -33,8 +35,10 @@ public class EnrichedPearlItem extends ItemBase{
         worldIn.playSound((EntityPlayer)null, PlayerIn.posX, PlayerIn.posY, PlayerIn.posZ, SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
         if (!worldIn.isRemote) {
             EnrichedPearlEntity enrichedPearl = new EnrichedPearlEntity(worldIn, PlayerIn);
+
             enrichedPearl.shoot(PlayerIn, PlayerIn.rotationPitch, PlayerIn.rotationYaw, 0.0F, 1.5F, 1.0F);
             worldIn.spawnEntity(enrichedPearl);
+
         }
 
         PlayerIn.addStat(StatList.getObjectUseStats(this));
@@ -49,6 +53,7 @@ public class EnrichedPearlItem extends ItemBase{
 
             if(itemStack.getCount() > 10){
                 itemStack.shrink(1);
+
                 EnrichedPearlEntity enrichedPearl = new EnrichedPearlEntity(world, (EntityLivingBase) entity);
                 //potionentity.setXRot(-20.0F);
                 enrichedPearl.shoot(-2.0 + random.nextDouble() + random.nextDouble() + random.nextDouble() + random.nextDouble(), 2.0 + random.nextDouble() + random.nextDouble(), -2.0 + random.nextDouble() + random.nextDouble() + random.nextDouble() + random.nextDouble(), 0.75F, 8.0F);
@@ -56,5 +61,10 @@ public class EnrichedPearlItem extends ItemBase{
             }
         }
         super.onUpdate(itemStack, world, entity, p_77663_4_, p_77663_5_);
+    }
+
+    @Override
+    public int getItemBurnTime(ItemStack itemStack) {
+        return 160;
     }
 }

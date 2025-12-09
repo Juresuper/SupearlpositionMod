@@ -2,5 +2,5 @@
 item.enriched_pearl.name=Enriched pearl
 #Blocks
 tile.pearlactor_plate.name=Pearlactor Plate
-tile.endergy_reactor_core.name=Endergy Reactor Core
-tile.endergy_reactor_control_block.name=Endergy Reactor Control Block
+tile.endergy_reactor_core.name=Endergy Reactor Part
+tile.endergy_reactor_control_block.name=Endergy Reactor Control

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CDC",
+    "DED",
+    "CDC"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "minecraft:chorus_fruit"
+    },
+    "E": {
+      "item": "minecraft:end_stone"
+    }
+  },
+  "result": {
+    "item": "supearlposition:endergy_reactor_control_block"
+  }
+}

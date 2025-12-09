@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CEC",
+    "EEE",
+    "CEC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chorus_fruit"
+    },
+    "E": {
+      "item": "minecraft:end_stone"
+    }
+  },
+  "result": {
+    "item": "supearlposition:endergy_reactor_core"
+  }
+}

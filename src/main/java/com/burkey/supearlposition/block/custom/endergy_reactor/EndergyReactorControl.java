@@ -38,6 +38,7 @@ public class EndergyReactorControl extends BlockBase implements ITileEntityProvi
     public static final PropertyEnum<EndergyReactorPartIndex> FORMED = PropertyEnum.<EndergyReactorPartIndex>create("formed",EndergyReactorPartIndex.class);
     public static final int GUI_ID = 1;
 
+
     public EndergyReactorControl(Material material, String name) {
         super(material, name);
         setHardness(5.0F);
@@ -87,7 +88,7 @@ public class EndergyReactorControl extends BlockBase implements ITileEntityProvi
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             return true;
         }
@@ -161,5 +162,6 @@ public class EndergyReactorControl extends BlockBase implements ITileEntityProvi
         }
         return null;
     }
+
 
 }
