@@ -59,7 +59,9 @@ public class GuiEndergyReactor extends GuiContainer{
 
     private int getProduction() {
         int production;
-        if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE1 && reactorControl.getClientPearlCount() > 100) {
+        if(reactorControl.getClientPearlCount() < 100){
+            production = 0;
+        }else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE1 && reactorControl.getClientPearlCount() > 100) {
             production = 10;
         } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE2) {
             production = 40;
@@ -70,6 +72,7 @@ public class GuiEndergyReactor extends GuiContainer{
         }else{
             production = 500;
         }
+        production = production / (TileEndergyReactorControl.REACTOR_CYCLE_LENGTH / 20);
         return production;
     }
 
@@ -115,15 +118,23 @@ public class GuiEndergyReactor extends GuiContainer{
         int s3 = left + (barWidth * TileEndergyReactorControl.STAGE3  / TileEndergyReactorControl.MAX_PEARL_COUNT);
         int s4 = left + (barWidth * TileEndergyReactorControl.STAGE4  / TileEndergyReactorControl.MAX_PEARL_COUNT);
 
-        int sepColor = 0xFFFF0000;
-        drawVerticalLine(guiLeft + s1, guiTop + bottom+1, guiTop + top, sepColor);
-        drawVerticalLine(guiLeft + s2, guiTop + bottom+1, guiTop + top, sepColor);
-        drawVerticalLine(guiLeft + s3, guiTop + bottom+1, guiTop + top, sepColor);
-        drawVerticalLine(guiLeft + s4, guiTop + bottom+1, guiTop + top, sepColor);
-
 
         int percentage = pearlCount * 100 / TileEndergyReactorControl.MAX_PEARL_COUNT;
 
+        if(pearlCount < 100){
+            percentage = pearlCount / 100;
+        }else if(pearlCount > 100 &&  pearlCount < TileEndergyReactorControl.STAGE1){
+            percentage = pearlCount * 100 / TileEndergyReactorControl.STAGE1;
+        }else if(pearlCount > TileEndergyReactorControl.STAGE1 &&  pearlCount < TileEndergyReactorControl.STAGE2){
+            percentage = pearlCount * 100 / TileEndergyReactorControl.STAGE2;
+        }else if(pearlCount > TileEndergyReactorControl.STAGE2 &&  pearlCount < TileEndergyReactorControl.STAGE3){
+            percentage = pearlCount * 100 / TileEndergyReactorControl.STAGE3;
+        }else if(pearlCount > TileEndergyReactorControl.STAGE3 &&  pearlCount < TileEndergyReactorControl.STAGE4){
+            percentage = pearlCount * 100 / TileEndergyReactorControl.STAGE4;
+
+        }else{
+            percentage = pearlCount * 100 / TileEndergyReactorControl.MAX_PEARL_COUNT;
+        }
         if(pearlCount < TileEndergyReactorControl.MAX_PEARL_COUNT){
             for (int i = 0 ; i < percentage ; i++) {
                 drawVerticalLine(guiLeft + left + 1 + i, guiTop + bottom, guiTop + top,

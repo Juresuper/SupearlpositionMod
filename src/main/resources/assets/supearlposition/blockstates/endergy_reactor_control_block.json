@@ -36,7 +36,7 @@
           "west":  "supearlposition:blocks/reactor_bottom_right",
           "east":  "supearlposition:blocks/reactor_bottom_right",
           "up":    "supearlposition:blocks/reactor_top_left",
-          "down":  "supearlposition:blocks/reactor_bottom_left"
+          "down":  "supearlposition:blocks/reactor_top_left"
         }
       },
 
@@ -80,7 +80,7 @@
           "west":  "supearlposition:blocks/reactor_bottom_left",
           "east":  "supearlposition:blocks/reactor_bottom_left",
           "up":    "supearlposition:blocks/reactor_top_right",
-          "down":  "supearlposition:blocks/reactor_bottom_right"
+          "down":  "supearlposition:blocks/reactor_top_right"
         }
       },
 
