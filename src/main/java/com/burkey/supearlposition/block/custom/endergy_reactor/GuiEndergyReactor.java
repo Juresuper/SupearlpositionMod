@@ -48,7 +48,7 @@ public class GuiEndergyReactor extends GuiContainer{
             int percentage = 100 - reactorControl.getReactor_cycle_count() * 100 / TileEndergyReactorControl.REACTOR_CYCLE_LENGTH;
             drawString(mc.fontRenderer, "Cycle Progress: " + percentage, guiLeft + 83, guiTop + 35, 0xFF00FF00);
 
-            int production = getProduction();
+            double production = Math.round(getProduction() * 100.0) / 100.0;
             drawString(mc.fontRenderer, "Production speed:", guiLeft + 83, guiTop + 50, 0xFF00FF00);
             drawString(mc.fontRenderer, production + " Pearls/s:", guiLeft + 105, guiTop + 65, 0xFF00FF00);
         }
@@ -57,24 +57,28 @@ public class GuiEndergyReactor extends GuiContainer{
 
     }
 
-    private int getProduction() {
-        int production;
-        if(reactorControl.getClientPearlCount() < 100){
-            production = 0;
-        }else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE1 && reactorControl.getClientPearlCount() > 100) {
-            production = 10;
-        } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE2) {
-            production = 40;
-        } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE3) {
-            production = 100;
-        } else if (reactorControl.getClientPearlCount() < TileEndergyReactorControl.STAGE4) {
-            production = 150;
-        }else{
-            production = 500;
+    private double getProduction() {
+        int pearls = reactorControl.getClientPearlCount();
+        int fuelPerCycle;
+
+        if (pearls < 100) {
+            fuelPerCycle = 0;
+        } else if (pearls < TileEndergyReactorControl.STAGE1) {
+            fuelPerCycle = 10;
+        } else if (pearls < TileEndergyReactorControl.STAGE2) {
+            fuelPerCycle = 40;
+        } else if (pearls < TileEndergyReactorControl.STAGE3) {
+            fuelPerCycle = 100;
+        } else if (pearls < TileEndergyReactorControl.STAGE4) {
+            fuelPerCycle = 150;
+        } else {
+            fuelPerCycle = 500;
         }
-        production = production / (TileEndergyReactorControl.REACTOR_CYCLE_LENGTH / 20);
-        return production;
+
+        double pearlsPerSecond = fuelPerCycle * (20.0 / (double) TileEndergyReactorControl.REACTOR_CYCLE_LENGTH);
+        return pearlsPerSecond;
     }
+
 
     @Override
     public void handleKeyboardInput() throws IOException {
@@ -90,17 +94,6 @@ public class GuiEndergyReactor extends GuiContainer{
             drawHoveringText(Collections.singletonList("Pearl count: "+ reactorControl.getClientPearlCount()), mouseX, mouseY, fontRenderer);
         }
     }
-    /*private void drawCycleProgressBar(int cycleProgress) {
-        int left = 80;
-        int top = 120;
-        int right = 170;
-        int bottom = 110;
-        drawRect(guiLeft + left, guiTop + top, guiLeft + right, guiTop + bottom, 0xff555555);
-        int percentage = 100 - cycleProgress * 100 / TileEndergyReactorControl.REACTOR_CYCLE_LENGTH;
-        for (int i = 0 ; i < percentage ; i++) {
-            drawVerticalLine(guiLeft + left + 1 + i, guiTop + top, guiTop + bottom, i % 2 == 0 ? 0xffff0000 : 0xff000000);
-        }
-    }*/
     private void drawPearlCountBar(int pearlCount) {
         int left = 80;
         int top = 130;
@@ -119,11 +112,21 @@ public class GuiEndergyReactor extends GuiContainer{
         int s4 = left + (barWidth * TileEndergyReactorControl.STAGE4  / TileEndergyReactorControl.MAX_PEARL_COUNT);
 
 
-        int percentage = pearlCount * 100 / TileEndergyReactorControl.MAX_PEARL_COUNT;
+        int percentage = getPercentage(pearlCount);
+        if(pearlCount < TileEndergyReactorControl.MAX_PEARL_COUNT){
+            for (int i = 0 ; i < percentage ; i++) {
+                drawVerticalLine(guiLeft + left + 1 + i, guiTop + bottom, guiTop + top,
+                        i % 4 == 0 ? 0xFF00FF00 : 0xFF008000);
+            }
+        } else {
+            drawString(mc.fontRenderer, "CRITICAL MASS", guiLeft + left + 15, guiTop + 120, 0xFF00FF00);
+        }
+    }
 
-        if(pearlCount < 100){
-            percentage = pearlCount / 100;
-        }else if(pearlCount > 100 &&  pearlCount < TileEndergyReactorControl.STAGE1){
+    private static int getPercentage(int pearlCount) {
+        int percentage = 0;
+
+        if(pearlCount < TileEndergyReactorControl.STAGE1){
             percentage = pearlCount * 100 / TileEndergyReactorControl.STAGE1;
         }else if(pearlCount > TileEndergyReactorControl.STAGE1 &&  pearlCount < TileEndergyReactorControl.STAGE2){
             percentage = pearlCount * 100 / TileEndergyReactorControl.STAGE2;
@@ -135,14 +138,7 @@ public class GuiEndergyReactor extends GuiContainer{
         }else{
             percentage = pearlCount * 100 / TileEndergyReactorControl.MAX_PEARL_COUNT;
         }
-        if(pearlCount < TileEndergyReactorControl.MAX_PEARL_COUNT){
-            for (int i = 0 ; i < percentage ; i++) {
-                drawVerticalLine(guiLeft + left + 1 + i, guiTop + bottom, guiTop + top,
-                        i % 4 == 0 ? 0xFF00FF00 : 0xFF008000);
-            }
-        } else {
-            drawString(mc.fontRenderer, "CRITICAL MASS", guiLeft + left + 15, guiTop + 120, 0xFF00FF00);
-        }
+        return percentage;
     }
 
 }

@@ -92,7 +92,7 @@ public class EndergyReactorControl extends BlockBase implements ITileEntityProvi
         if (world.isRemote) {
             return true;
         }
-        if (player.getHeldItem(hand).getItem() == Items.STICK) {
+        if(player.isSneaking() && player.getHeldItem(hand).isEmpty()){
             toggleMultiBlock(world, pos, state, player);
             return true;
         }
