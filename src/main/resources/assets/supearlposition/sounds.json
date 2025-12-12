@@ -1,0 +1,20 @@
+{
+ "blocks.endergy_reactor.endergy_running":
+ {
+   "category": "block",
+   "subtitle": "blocks.endergy_reactor.endergy_running",
+   "sounds": [{"name": "supearlposition:blocks/endergy_reactor/endergy_running", "stream":true}]
+ },
+  "blocks.endergy_reactor.endergy_unstable":
+  {
+    "category": "block",
+    "subtitle": "blocks.endergy_reactor.endergy_unstable",
+    "sounds": [{"name": "supearlposition:blocks/endergy_reactor/endergy_unstable", "stream":true}]
+  },
+  "entity.meltdownblob.pearl_storm":
+  {
+    "category": "entity",
+    "subtitle": "entity.meltdownblob.pearl_storm",
+    "sounds": [{"name": "supearlposition:entity/meltdownblob/pearl_storm", "stream":true}]
+  }
+}

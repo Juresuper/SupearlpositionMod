@@ -1,6 +1,7 @@
 package com.burkey.supearlposition.block.custom.endergy_reactor;
 
 import com.burkey.supearlposition.block.ModBlocks;
+import com.burkey.supearlposition.block.custom.tools.SoundsTools;
 import com.burkey.supearlposition.item.ModItems;
 import com.burkey.supearlposition.projectile.EnrichedPearlEntity;
 import com.burkey.supearlposition.projectile.MeltdownBlobEntity;
@@ -8,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -17,6 +19,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -29,6 +32,8 @@ import scala.collection.parallel.ParIterableLike;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Random;
 
 import static net.minecraftforge.common.ForgeVersion.getResult;
 
@@ -56,7 +61,7 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
 
 
     private int progress = 0;
-    private int countdown = 100;
+    private int countdown = 600;
     private int pearl_count = 0;
     private int clientProgress = -1;
     private int clientPearlCount = -1;
@@ -134,13 +139,26 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
                 setState(EndergyReactorState.WORKING);
                 if(reactor_cycle_count > 0){
                     reactor_cycle_count--;
+                    if(reactor_cycle_count == 1){
+                        world.playSound(null,this.getPos(), SoundsTools.ENDERGY_RUNNING, SoundCategory.BLOCKS,0.5f,1.0f);
+
+                    }
                 markDirty();
                 }else{
                     runReactor();
                 }
             }else if(pearl_count >= MIN_PEARL_COUNT){
                 if(countdown > 0){
+                    Random rand = new Random();
+                    float pitch = 0.8f + rand.nextFloat() * 0.4f;
                     countdown--;
+
+                    if(countdown % 59 == 0){
+                        world.playSound(null, this.getPos(), SoundsTools.ENDERGY_UNSTABLE, SoundCategory.BLOCKS, 0.5f, pitch);
+                    }
+
+
+
                 }else{
                     reactorMeltdown(this.world,this.pos);
                 }
@@ -169,7 +187,7 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
         }else{
             fuel_produced = 500;
         }
-        //fuel_produced *= 100;
+        fuel_produced *= 100;
 
         //fuel_produced = (int) (pearl_count * conversion_rate);
         //pearl_count -= fuel_produced;

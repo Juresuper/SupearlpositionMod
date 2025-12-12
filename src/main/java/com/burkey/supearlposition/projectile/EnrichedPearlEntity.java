@@ -1,12 +1,15 @@
 package com.burkey.supearlposition.projectile;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.monster.EntityEndermite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.entity.projectile.ProjectileHelper;
@@ -46,9 +49,10 @@ public class EnrichedPearlEntity extends EntityThrowable {
         super(world);
         parentBlob = blob;
         isInMeltdown = Meltdown;
-        this.posX = blob.posX;
+        random = new Random();
+        this.posX = blob.posX + (random.nextDouble() * 2 -1);
         this.posY = blob.posY;
-        this.posZ = blob.posZ;
+        this.posZ = blob.posZ + (random.nextDouble() * 2 -1);
         this.parentUUID = blob.getUniqueID();
     }
 
@@ -76,6 +80,8 @@ public class EnrichedPearlEntity extends EntityThrowable {
         random = new Random();
         float f1 = 0.99F;
         if (isInMeltdown) {
+            int chance = random.nextInt(10 - 1 + 1) + 1;
+
             double chaos = 0.1D;
 
             this.motionX += (random.nextDouble() - 0.5D) * chaos;
@@ -84,10 +90,13 @@ public class EnrichedPearlEntity extends EntityThrowable {
 
 
             if (parentBlob != null) {
-                if(this.ticksExisted % 40 == 0){
-                    this.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
+                if(this.ticksExisted % 80 == 0){
+                    this.playSound(SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT, 0.3F, 1.0F);
                 }
                 if(this.ticksExisted == 200){
+                    if(chance < 3){
+                        this.scatter();
+                    }
                     isInMeltdown = false;
                 }
                 this.setNoGravity(true);
@@ -139,7 +148,16 @@ public class EnrichedPearlEntity extends EntityThrowable {
 
 
         if(traceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
-            teleportBlock(this.world,traceResult.getBlockPos());
+            if (this.rand.nextFloat() < 0.01F && this.world.getGameRules().getBoolean("doMobSpawning")){
+                //summonEndermite(world);
+            }
+            if(this.rand.nextFloat() < 0.40F){
+                teleportBlock(this.world,traceResult.getBlockPos());
+
+            }
+            if(this.rand.nextFloat() < 0.10F){
+                transformBlock(this.world,traceResult.getBlockPos());
+            }
             this.setDead();
 
         }
@@ -151,7 +169,6 @@ public class EnrichedPearlEntity extends EntityThrowable {
             double posx = livingBase.posX;
             double posy = livingBase.posY;
             double posz = livingBase.posZ;
-            if(!(livingBase instanceof EntityLiving)) return;
 
             for(int lvt_11_1_ = 0; lvt_11_1_ < 16; ++lvt_11_1_) {
                 double lvt_12_1_ = livingBase.posX + (livingBase.getRNG().nextDouble() - (double)0.5F) * (double)16.0F;
@@ -198,6 +215,48 @@ public class EnrichedPearlEntity extends EntityThrowable {
             }
         }
 
+    }
+    /*private void summonEndermite(World world){
+        EntityEndermite entityendermite = new EntityEndermite(this.world);
+        entityendermite.setSpawnedByPlayer(false);
+        entityendermite.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+        world.spawnEntity(entityendermite);
+    }*/
+
+    private void transformBlock(World world, BlockPos blockPos){
+        IBlockState iblockstate = world.getBlockState(blockPos);
+        Block block = iblockstate.getBlock();
+        if(!(block instanceof ITileEntityProvider) && (block.getBlockHardness(iblockstate,world,blockPos) >= 0)) {
+            for(int i = 0; i < 1000; ++i) {
+                world.setBlockState(blockPos, Blocks.END_STONE.getDefaultState(),3);
+
+                if (world.isAirBlock(blockPos)) {
+                    if (world.isRemote) {
+                        for (int j = 0; j < 128; ++j) {
+                            double d0 = world.rand.nextDouble();
+                            float f = (world.rand.nextFloat() - 0.5F) * 0.2F;
+                            float f1 = (world.rand.nextFloat() - 0.5F) * 0.2F;
+                            float f2 = (world.rand.nextFloat() - 0.5F) * 0.2F;
+                            double d1 = (double) blockPos.getX() + (double) (blockPos.getX() - blockPos.getX()) * d0 + (world.rand.nextDouble() - (double) 0.5F) + (double) 0.5F;
+                            double d2 = (double) blockPos.getY() + (double) (blockPos.getY() - blockPos.getY()) * d0 + world.rand.nextDouble() - (double) 0.5F;
+                            double d3 = (double) blockPos.getZ() + (double) (blockPos.getZ() - blockPos.getZ()) * d0 + (world.rand.nextDouble() - (double) 0.5F) + (double) 0.5F;
+                            world.spawnParticle(EnumParticleTypes.PORTAL, d1, d2, d3, (double) f, (double) f1, (double) f2, new int[0]);
+                        }
+                    } else {
+                        world.setBlockState(blockPos, iblockstate, 2);
+                        world.setBlockToAir(blockPos);
+                    }
+
+                    return;
+                }
+            }
+        }
+
+    }
+    private void scatter(){
+        this.world.spawnParticle(EnumParticleTypes.PORTAL, this.posX - this.motionX * 0.25D + this.rand.nextDouble() * 0.6D - 0.3D, this.posY - this.motionY * 0.25D - 0.5D, this.posZ - this.motionZ * 0.25D + this.rand.nextDouble() * 0.6D - 0.3D, this.motionX, this.motionY, this.motionZ);
+        this.playSound(SoundEvents.BLOCK_LAVA_POP, 0.1F, 1.0F);
+        this.setDead();
     }
 
     @Override

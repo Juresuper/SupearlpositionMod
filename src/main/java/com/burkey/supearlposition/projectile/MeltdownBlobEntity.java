@@ -92,23 +92,15 @@ public class MeltdownBlobEntity extends Entity {
                 pearlCount--;
                 System.out.println(pearlCount);
             }
+            if(pearlCount == 0){
+                this.setDead();
+            }
             ++this.ticksInAir;
             this.posX += this.motionX;
             this.posY += this.motionY;
             this.posZ += this.motionZ;
             ProjectileHelper.rotateTowardsMovement(this, 0.2F);
             float f = this.getMotionFactor();
-
-            if (this.isInWater())
-            {
-                for (int i = 0; i < 4; ++i)
-                {
-                    float f1 = 0.25F;
-                    this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, this.posX - this.motionX * 0.25D, this.posY - this.motionY * 0.25D, this.posZ - this.motionZ * 0.25D, this.motionX, this.motionY, this.motionZ);
-                }
-
-                f = 0.8F;
-            }
             double chaos = 0.2D;
 
             this.motionX += (random.nextDouble() - 0.5D) * chaos;
@@ -118,7 +110,6 @@ public class MeltdownBlobEntity extends Entity {
             this.motionX *= (double)f;
             this.motionY *= (double)f;
             this.motionZ *= (double)f;
-            this.world.spawnParticle(this.getParticleType(), this.posX, this.posY + 0.5D, this.posZ, 0.0D, 0.0D, 0.0D);
             this.setPosition(this.posX, this.posY, this.posZ);
 
             double distX = posX - centerx;
@@ -140,10 +131,6 @@ public class MeltdownBlobEntity extends Entity {
         }
     }
 
-    protected EnumParticleTypes getParticleType()
-    {
-        return EnumParticleTypes.SMOKE_NORMAL;
-    }
     protected float getMotionFactor()
     {
         return 0.95F;

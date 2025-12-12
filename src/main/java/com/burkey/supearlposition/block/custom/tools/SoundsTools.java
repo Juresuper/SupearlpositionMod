@@ -7,9 +7,13 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class SoundsTools {
     public static SoundEvent ENDERGY_RUNNING;
+    public static SoundEvent ENDERGY_UNSTABLE;
+    public static SoundEvent PEARL_STORM;
 
     public static void registerSounds() {
-        ENDERGY_RUNNING = registerSound("endergy_running");
+        ENDERGY_RUNNING = registerSound("blocks.endergy_reactor.endergy_running");
+        ENDERGY_UNSTABLE = registerSound("blocks.endergy_reactor.endergy_unstable");
+        PEARL_STORM = registerSound("entity.meltdownblob.pearl_storm");
     }
     private static SoundEvent registerSound(String name) {
         ResourceLocation location = new ResourceLocation(SupearlpositionMod.MODID, name);
