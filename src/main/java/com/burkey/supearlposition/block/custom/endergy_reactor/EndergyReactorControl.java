@@ -41,8 +41,8 @@ public class EndergyReactorControl extends BlockBase implements ITileEntityProvi
 
     public EndergyReactorControl(Material material, String name) {
         super(material, name);
-        setHardness(5.0F);
-        setResistance(10.0F);
+        setHardness(3.0F);
+        setResistance(9.0F);
         setHarvestLevel("pickaxe", 1);
 
         setDefaultState(this.blockState.getBaseState().withProperty(FORMED, EndergyReactorPartIndex.UNFORMED));

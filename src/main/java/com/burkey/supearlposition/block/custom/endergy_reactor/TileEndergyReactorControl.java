@@ -126,6 +126,9 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
     @Override
     public void update() {
         if(!world.isRemote){
+            if(!checkFormed() && pearl_count > MIN_PEARL_COUNT){
+                reactorMeltdown(this.world,this.pos);
+            }
             if(progress > 0){
                 progress--;
                 if(progress <= 0){
@@ -139,13 +142,11 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
                 setState(EndergyReactorState.WORKING);
                 if(reactor_cycle_count > 0){
                     reactor_cycle_count--;
-                    if(reactor_cycle_count == 1){
-                        world.playSound(null,this.getPos(), SoundsTools.ENDERGY_RUNNING, SoundCategory.BLOCKS,0.5f,1.0f);
-
-                    }
                 markDirty();
                 }else{
                     runReactor();
+                    world.playSound(null,this.getPos(), SoundsTools.ENDERGY_RUNNING, SoundCategory.BLOCKS,0.5f,1.0f);
+
                 }
             }else if(pearl_count >= MIN_PEARL_COUNT){
                 if(countdown > 0){
@@ -402,6 +403,11 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
             IBlockState blockState = world.getBlockState(pos);
             getWorld().notifyBlockUpdate(pos, blockState, blockState, 3);
         }
+    }
+
+    public boolean checkFormed(){
+        IBlockState state = world.getBlockState(pos);
+         return (state.getBlock() != ModBlocks.endergyReactorControlBlock || state.getValue(EndergyReactorControl.FORMED) != EndergyReactorPartIndex.UNFORMED);
     }
 
 

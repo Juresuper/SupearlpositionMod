@@ -32,6 +32,8 @@ public class EndergyReactorCoreBlock extends BlockBase implements ITileEntityPro
 
     public EndergyReactorCoreBlock(Material material, String name) {
         super(material,name);
+        setHardness(3.0F);
+        setResistance(9.0F);
         setDefaultState(blockState.getBaseState().withProperty(FORMED, EndergyReactorPartIndex.UNFORMED));
 
     }

@@ -41,8 +41,6 @@ public class GuiEndergyReactor extends GuiContainer{
             drawString(mc.fontRenderer, "OFF", guiLeft + 133, guiTop + 35, 0xFFFF0000);
 
             drawString(mc.fontRenderer, "Pearls required: " + (TileEndergyReactorControl.MIN_PEARL_COUNT -reactorControl.getClientPearlCount()), guiLeft + 83, guiTop + 50, 0xFF00FF00);
-            //drawString(mc.fontRenderer, 100 -reactorControl.getClientPearlCount()+ "", guiLeft + 105, guiTop + 65, 0xFF00FF00);
-
 
         }else{
             int percentage = 100 - reactorControl.getReactor_cycle_count() * 100 / TileEndergyReactorControl.REACTOR_CYCLE_LENGTH;
@@ -61,7 +59,7 @@ public class GuiEndergyReactor extends GuiContainer{
         int pearls = reactorControl.getClientPearlCount();
         int fuelPerCycle;
 
-        if (pearls < 100) {
+        if (pearls < TileEndergyReactorControl.MIN_PEARL_COUNT) {
             fuelPerCycle = 0;
         } else if (pearls < TileEndergyReactorControl.STAGE1) {
             fuelPerCycle = 10;
@@ -75,8 +73,7 @@ public class GuiEndergyReactor extends GuiContainer{
             fuelPerCycle = 500;
         }
 
-        double pearlsPerSecond = fuelPerCycle * (20.0 / (double) TileEndergyReactorControl.REACTOR_CYCLE_LENGTH);
-        return pearlsPerSecond;
+        return fuelPerCycle * (20.0 / (double) TileEndergyReactorControl.REACTOR_CYCLE_LENGTH);
     }
 
 
@@ -100,7 +97,6 @@ public class GuiEndergyReactor extends GuiContainer{
         int right = 180;
         int bottom = 120;
 
-        // your background
         drawRect(guiLeft + left-2, guiTop + bottom-2, guiLeft + right+2, guiTop + top+2, 0xFF3CFFD8);
         drawRect(guiLeft + left, guiTop + bottom, guiLeft + right, guiTop + top, 0xFF000000);
 
