@@ -187,7 +187,7 @@ public class TileEndergyReactorControl extends TileEntity implements ITickable {
         }else{
             fuel_produced = 500;
         }
-        fuel_produced *= 100;
+        //fuel_produced *= 100;
 
         //fuel_produced = (int) (pearl_count * conversion_rate);
         //pearl_count -= fuel_produced;
