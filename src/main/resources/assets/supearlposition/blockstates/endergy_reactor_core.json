@@ -8,7 +8,9 @@
       "west":  "supearlposition:blocks/reactor_core",
       "east":  "supearlposition:blocks/reactor_core",
       "up":  "supearlposition:blocks/reactor_core",
-      "down":  "supearlposition:blocks/reactor_core"
+      "down":  "supearlposition:blocks/reactor_core",
+      "particle": "supearlposition:blocks/reactor_core"
+
     }
   },
   "variants": {
