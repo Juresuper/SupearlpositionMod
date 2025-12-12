@@ -41,6 +41,7 @@ public class EnrichedPearlEntity extends EntityThrowable {
     private boolean isInMeltdown;
     private MeltdownBlobEntity parentBlob;
     private UUID parentUUID;
+    public boolean placeEndstone = true;
     public EnrichedPearlEntity(World world, EntityLivingBase entityLivingBase) {
         super(world, entityLivingBase);
         isInMeltdown = false;
@@ -61,9 +62,6 @@ public class EnrichedPearlEntity extends EntityThrowable {
         isInMeltdown = false;
     }
 
-    public static void registerFixesSnowball(DataFixer fixer) {
-        EntityThrowable.registerFixesThrowable(fixer, "Snowball");
-    }
 
     @SideOnly(Side.CLIENT)
     public void handleStatusUpdate(byte b) {
